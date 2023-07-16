@@ -7,4 +7,5 @@
     <string name="next_button">Next</string>
     <string name="correct_answer">Correct!</string>
     <string name="incorrect_answer">Incorrect!</string>
+    <string name="share_button">Share</string>
 </resources>

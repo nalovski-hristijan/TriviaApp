@@ -1,9 +1,11 @@
 package com.hnalovski.triviaapp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -53,6 +55,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         );
+
+        binding.buttonShare.setOnClickListener(view -> {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "I am playing Trivia");
+            intent.putExtra(Intent.EXTRA_TEXT, "My current score: "+ score.getScore() + ". And my highest is: " + prefs.getHighestScore());
+            startActivity(intent);
+        });
 
         binding.buttonNext.setOnClickListener(view -> {
             getNextQuestion();
