@@ -3,6 +3,7 @@ package com.hnalovski.triviaapp;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -94,10 +95,14 @@ public class MainActivity extends AppCompatActivity {
             snackMessageId = R.string.correct_answer;
             fadeAnimaton();
             addPoints();
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.correct_sound_effect);
+            mp.start();
         } else {
             snackMessageId = R.string.incorrect_answer;
             shakeAnimation();
             deductPoints();
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.wrong_sound_effect);
+            mp.start();
         }
         Snackbar.make(binding.cardView, snackMessageId, Snackbar.LENGTH_SHORT).show();
     }
