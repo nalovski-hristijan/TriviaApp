@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        score = new Score();
+        score = new Score(0);
         prefs = new Prefs(MainActivity.this);
 
         // Retrieve the last state
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("ResourceType")
     private void checkAnswer(boolean userChoseCorrect) {
-        boolean answer = questionList.get(currentQuestionIndex).isAnswerTrue();
+        boolean answer = questionList.get(currentQuestionIndex).getAnswerTrue();
         int snackMessageId = 0;
         if (userChoseCorrect == answer) {
             snackMessageId = R.string.correct_answer;
