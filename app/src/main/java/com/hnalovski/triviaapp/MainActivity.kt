@@ -2,7 +2,6 @@ package com.hnalovski.triviaapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +9,10 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.graphics.Color
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
 import com.hnalovski.triviaapp.data.AnswerListAsyncResponse
@@ -18,10 +20,11 @@ import com.hnalovski.triviaapp.data.Repository
 import com.hnalovski.triviaapp.databinding.ActivityMainBinding
 import com.hnalovski.triviaapp.model.Question
 import com.hnalovski.triviaapp.model.Score
+import com.hnalovski.triviaapp.screens.trivia.TriviaScreen
 import com.hnalovski.triviaapp.util.Prefs
 import java.text.MessageFormat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     var questionList: MutableList<Question?>? = null
     private var binding: ActivityMainBinding? = null
     private var currentQuestionIndex = 0
@@ -32,7 +35,10 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        enableEdgeToEdge()
+        setContent {
+            TriviaScreen()
+        }
 
         binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         score = Score(0)
