@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         prefs!!.savedHighestScore(score!!.score)
-        prefs!!.setState(currentQuestionIndex)
+        prefs!!.state = currentQuestionIndex
         Log.d("Pause", "onPause: saving score " + prefs!!.getHighestScore())
         super.onPause()
     }
