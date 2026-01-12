@@ -20,6 +20,9 @@ bin/
 gen/
 out/
 
+.kotlin
+
+
 # Gradle files
 .gradle
 .gradle/
