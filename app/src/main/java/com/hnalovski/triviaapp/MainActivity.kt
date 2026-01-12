@@ -39,55 +39,49 @@ class MainActivity : AppCompatActivity() {
         prefs = Prefs(this@MainActivity)
 
         // Retrieve the last state
-        currentQuestionIndex = prefs!!.getState()
+        currentQuestionIndex = prefs!!.state
 
-        binding!!.highestScoreText.setText(
-            MessageFormat.format(
-                "Highest: {0}",
-                prefs!!.getHighestScore()
-            ).toString()
-        )
-        binding!!.scoreText.setText(
-            MessageFormat.format(
-                "Current score: {0}",
-                score!!.score.toString()
-            )
+        binding!!.highestScoreText.text = MessageFormat.format(
+            "Highest: {0}",
+            prefs!!.highestScore
+        ).toString()
+        binding!!.scoreText.text = MessageFormat.format(
+            "Current score: {0}",
+            score!!.score.toString()
         )
 
         questionList =
-            Repository().getQuestions(AnswerListAsyncResponse { questionArrayList: ArrayList<Question?>? ->
-                binding!!.questionTextview.setText(
-                    questionArrayList!!.get(currentQuestionIndex)!!.answer
-                )
+            Repository().getQuestions({ questionArrayList: ArrayList<Question?>? ->
+                binding!!.questionTextview.text = questionArrayList!![currentQuestionIndex]!!.answer
                 updateCounter(questionArrayList)
-            }
+            } as AnswerListAsyncResponse?
 
             )
 
-        binding!!.buttonShare.setOnClickListener(View.OnClickListener { view: View? ->
+        binding!!.buttonShare.setOnClickListener { _: View? ->
             val intent = Intent(Intent.ACTION_SEND)
-            intent.setType("text/plain")
+            intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_SUBJECT, "I am playing Trivia")
             intent.putExtra(
                 Intent.EXTRA_TEXT,
-                "My current score: " + score!!.score + ". And my highest is: " + prefs!!.getHighestScore()
+                "My current score: " + score!!.score + ". And my highest is: " + prefs!!.highestScore
             )
             startActivity(intent)
-        })
+        }
 
-        binding!!.buttonNext.setOnClickListener(View.OnClickListener { view: View? ->
+        binding!!.buttonNext.setOnClickListener { _: View? ->
             this.nextQuestion
-        })
+        }
 
-        binding!!.buttonTrue.setOnClickListener(View.OnClickListener { view: View? ->
+        binding!!.buttonTrue.setOnClickListener { _: View? ->
             checkAnswer(true)
             updateQuestion()
-        })
+        }
 
-        binding!!.buttonFalse.setOnClickListener(View.OnClickListener { view: View? ->
+        binding!!.buttonFalse.setOnClickListener { _: View? ->
             checkAnswer(false)
             updateQuestion()
-        })
+        }
     }
 
     private val nextQuestion: Unit
@@ -98,41 +92,39 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("ResourceType")
     private fun checkAnswer(userChoseCorrect: Boolean) {
-        val answer = questionList!!.get(currentQuestionIndex)!!.answerTrue
-        var snackMessageId = 0
+        val answer = questionList!![currentQuestionIndex]!!.answerTrue
+        var snackMessageId: Int
         if (userChoseCorrect == answer) {
             snackMessageId = R.string.correct_answer
-            fadeAnimaton()
+            fadeAnimation()
             addPoints()
-            val mp = MediaPlayer.create(getApplicationContext(), R.raw.correct_sound_effect)
+            val mp = MediaPlayer.create(applicationContext, R.raw.correct_sound_effect)
             mp.start()
         } else {
             snackMessageId = R.string.incorrect_answer
             shakeAnimation()
             deductPoints()
-            val mp = MediaPlayer.create(getApplicationContext(), R.raw.wrong_sound_effect)
+            val mp = MediaPlayer.create(applicationContext, R.raw.wrong_sound_effect)
             mp.start()
         }
         Snackbar.make(binding!!.cardView, snackMessageId, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun updateCounter(questionArrayList: ArrayList<Question?>) {
-        binding!!.textViewOutOf.setText(
-            MessageFormat.format(
-                "Question: {0}/{1}",
-                currentQuestionIndex,
-                questionArrayList.size
-            )
+        binding!!.textViewOutOf.text = MessageFormat.format(
+            "Question: {0}/{1}",
+            currentQuestionIndex,
+            questionArrayList.size
         )
     }
 
-    private fun fadeAnimaton() {
+    private fun fadeAnimation() {
         val alphaAnimation = AlphaAnimation(1.0f, 0.0f)
-        alphaAnimation.setDuration(300)
-        alphaAnimation.setRepeatCount(1)
-        alphaAnimation.setRepeatMode(Animation.REVERSE)
+        alphaAnimation.duration = 300
+        alphaAnimation.repeatCount = 1
+        alphaAnimation.repeatMode = Animation.REVERSE
 
-        binding!!.cardView.setAnimation(alphaAnimation)
+        binding!!.cardView.animation = alphaAnimation
 
         alphaAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {
@@ -150,14 +142,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        val question = questionList!!.get(currentQuestionIndex)!!.answer
-        binding!!.questionTextview.setText(question)
+        val question = questionList!![currentQuestionIndex]!!.answer
+        binding!!.questionTextview.text = question
         updateCounter((questionList as java.util.ArrayList<Question?>?)!!)
     }
 
     private fun shakeAnimation() {
         val shake = AnimationUtils.loadAnimation(this@MainActivity, R.anim.shake_animation)
-        binding!!.cardView.setAnimation(shake)
+        binding!!.cardView.animation = shake
 
         shake.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {
@@ -178,11 +170,9 @@ class MainActivity : AppCompatActivity() {
         if (scoreCounter > 0) {
             scoreCounter -= 100
             score!!.score = scoreCounter
-            binding!!.scoreText.setText(
-                MessageFormat.format(
-                    "Current score: {0}",
-                    score!!.score.toString()
-                )
+            binding!!.scoreText.text = MessageFormat.format(
+                "Current score: {0}",
+                score!!.score.toString()
             )
         } else {
             scoreCounter = 0
@@ -193,19 +183,17 @@ class MainActivity : AppCompatActivity() {
     private fun addPoints() {
         scoreCounter += 100
         score!!.score = scoreCounter
-        binding!!.scoreText.setText(score!!.score.toString())
-        binding!!.scoreText.setText(
-            MessageFormat.format(
-                "Current score: {0}",
-                score!!.score.toString()
-            )
+        binding!!.scoreText.text = score!!.score.toString()
+        binding!!.scoreText.text = MessageFormat.format(
+            "Current score: {0}",
+            score!!.score.toString()
         )
     }
 
     override fun onPause() {
         prefs!!.savedHighestScore(score!!.score)
         prefs!!.state = currentQuestionIndex
-        Log.d("Pause", "onPause: saving score " + prefs!!.getHighestScore())
+        Log.d("Pause", "onPause: saving score " + prefs!!.highestScore)
         super.onPause()
     }
 }
